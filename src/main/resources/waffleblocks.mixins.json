@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.ewoudje.waffleblocks.mixins.impl",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "waffleblocks.refmap.json",
+  "plugin": "com.ewoudje.waffleblocks.mixins.WafflePlugin",
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
