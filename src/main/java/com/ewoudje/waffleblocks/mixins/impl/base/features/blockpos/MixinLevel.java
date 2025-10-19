@@ -2,8 +2,9 @@ package com.ewoudje.waffleblocks.mixins.impl.base.features.blockpos;
 
 import com.ewoudje.waffleblocks.WaffleBlocks;
 import com.ewoudje.waffleblocks.api.Grid;
-import com.ewoudje.waffleblocks.api.components.GetBlockStateComponent;
-import com.ewoudje.waffleblocks.api.components.SetBlockStateComponent;
+import com.ewoudje.waffleblocks.api.components.ComponentGetter;
+import com.ewoudje.waffleblocks.api.components.world.GetBlockStateComponent;
+import com.ewoudje.waffleblocks.api.components.world.SetBlockStateComponent;
 import com.ewoudje.waffleblocks.util.GridBlockPos;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -14,6 +15,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -23,12 +25,16 @@ import java.util.function.Predicate;
 
 @Mixin(Level.class)
 public class MixinLevel {
+    @Unique
+    private static final ComponentGetter<GetBlockStateComponent> GETTER_GET = GetBlockStateComponent.TYPE.getter();
+    @Unique
+    private static final ComponentGetter<SetBlockStateComponent> GETTER_SET = SetBlockStateComponent.TYPE.getter();
 
     @WrapMethod(method = "getBlockState")
     BlockState wb$getBlockState(BlockPos pos, Operation<BlockState> original) {
         Grid grid = GridBlockPos.getGrid((Level) (Object) this, pos);
         if (grid == null) return original.call(pos);
-        GetBlockStateComponent comp = grid.getComponent(GetBlockStateComponent.TYPE);
+        GetBlockStateComponent comp = GETTER_GET.getComponent(grid);
         if (comp == null) return original.call(pos);
 
         return comp.getBlockState(GridBlockPos.asGridBlockPos(grid, pos), original);
@@ -38,7 +44,7 @@ public class MixinLevel {
     boolean wb$setBlockState(BlockPos pos, BlockState state, int flags, int recursionLeft, Operation<Boolean> original) {
         Grid grid = GridBlockPos.getGrid((Level) (Object) this, pos);
         if (grid == null) return original.call(pos, state, flags, recursionLeft);
-        SetBlockStateComponent comp = grid.getComponent(SetBlockStateComponent.TYPE);
+        SetBlockStateComponent comp = GETTER_SET.getComponent(grid);
         if (comp == null) return original.call(pos, state, flags, recursionLeft);
 
         return comp.setBlockState(GridBlockPos.asGridBlockPos(grid, pos), state, flags, recursionLeft, original);
@@ -47,7 +53,7 @@ public class MixinLevel {
     @Inject(method = "getEntities(Lnet/minecraft/world/level/entity/EntityTypeTest;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;Ljava/util/List;I)V", at = @At("HEAD"), cancellable = true)
     void wb$getEntities(EntityTypeTest<Entity, Entity> entityTypeTest, AABB bounds, Predicate<? super Entity> predicate, List<? super Entity> output, int maxResults, CallbackInfo ci) {
         if (bounds.getXsize() > 1000 || bounds.getYsize() > 1000 || bounds.getZsize() > 1000) {
-            WaffleBlocks.LOGGER.warn("The AABB is too big!!, you are trying to get entities in a huge area!!, this is not supported by WaffleBlocks!");
+            WaffleBlocks.LOGGER.warn("The AABB is too big, you are trying to get entities in a huge area!, this is not supported by WaffleBlocks!");
             ci.cancel();
         }
     }

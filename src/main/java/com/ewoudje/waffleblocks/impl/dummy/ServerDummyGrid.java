@@ -21,14 +21,4 @@ public class ServerDummyGrid extends DummyGrid implements ServerGrid {
     public ServerDummyGrid(int id, Vector3dc pos, Quaternionfc rot) {
         super(id, pos, rot);
     }
-
-    @Override
-    public <C> C getServerComponent(GridComponentType<ServerGrid, C> componentType) {
-        return null;
-    }
-
-    @Override
-    public <C> @Nullable C getComponent(GridComponentType<? extends Grid, C> componentType) {
-        return null;
-    }
 }

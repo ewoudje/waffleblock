@@ -1,7 +1,6 @@
 package com.ewoudje.waffleblocks.mixins.impl.cag.base;
 
-import com.ewoudje.waffleblocks.api.Grid;
-import com.ewoudje.wafflecreate.ContraptionComponent;
+import com.ewoudje.wafflecreate.ContraptionLogic;
 import com.ewoudje.wafflecreate.IGridContraption;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.render.ContraptionVisual;
@@ -20,6 +19,6 @@ public class MixinContraptionVisual {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     public void wb$init(VisualizationContext ctx, AbstractContraptionEntity entity, float partialTick, CallbackInfo ci) {
-        ((IGridContraption) entity.getContraption()).getComponent(ContraptionComponent.TYPE).setEmbedding(this.embedding);
+        (((IGridContraption) entity.getContraption()).waffle$getLogic()).setEmbedding(this.embedding);
     }
 }

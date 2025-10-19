@@ -22,7 +22,7 @@ public abstract class AbstractServerGridLevel extends AbstractGridLevel<ServerGr
     }
 
     @Override
-    public <C> ServerGrid createGrid(GridSource.Factory<C> sourceFactory, C context) {
+    public <C> @NotNull ServerGrid createGrid(GridSource.Factory<C> sourceFactory, C context) {
         PacketDistributor.sendToAllPlayers(new NewGridPacket<>(counter, sourceFactory, context)); // TODO send to all players viewing this grid
         ServerGrid grid = getGridSource(sourceFactory).createGrid(counter++, context);
         gridMap.put(counter - 1, grid);
@@ -33,11 +33,6 @@ public abstract class AbstractServerGridLevel extends AbstractGridLevel<ServerGr
     @Override
     public @NotNull ServerLevel getLevel() {
         return level;
-    }
-
-    @Override
-    public <C> Stream<Pair<ServerGrid, C>> findWithServerComponent(GridComponentType<ServerGrid, C> component) {
-        return (Stream<Pair<ServerGrid, C>>) (Object) this.findWithComponent((GridComponentType<Grid, C>) (Object) component); //Most safe cast in history
     }
 
     @Override

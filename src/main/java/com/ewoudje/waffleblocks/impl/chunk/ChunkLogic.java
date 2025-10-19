@@ -3,7 +3,13 @@ package com.ewoudje.waffleblocks.impl.chunk;
 import com.ewoudje.waffleblocks.api.ClientGrid;
 import com.ewoudje.waffleblocks.api.ClientGridLevel;
 import com.ewoudje.waffleblocks.api.Grid;
-import com.ewoudje.waffleblocks.api.components.*;
+import com.ewoudje.waffleblocks.api.components.interaction.ClipableComponent;
+import com.ewoudje.waffleblocks.api.components.world.GetBlockStateComponent;
+import com.ewoudje.waffleblocks.api.components.world.SetBlockStateComponent;
+import com.ewoudje.waffleblocks.api.components.rendering.FlywheelEffectComponent;
+import com.ewoudje.waffleblocks.api.components.rendering.FlywheelEmbeddingComponent;
+import com.ewoudje.waffleblocks.api.components.rendering.FlywheelVisualManagersComponent;
+import com.ewoudje.waffleblocks.api.components.GridLogicType;
 import com.ewoudje.waffleblocks.impl.flywheel.FlywheelManagedComponentVisual;
 import com.ewoudje.waffleblocks.util.ClipContextHelper;
 import com.ewoudje.waffleblocks.util.GridBlockPos;
@@ -34,8 +40,8 @@ import org.joml.Vector3dc;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ChunkBasedComponent implements FlywheelManagedComponent, FlywheelEmbeddingComponent, FlywheelEffectComponent, ClipableComponent, GetBlockStateComponent, SetBlockStateComponent {
-    public static final GridComponentType<Grid, ChunkBasedComponent> TYPE = new GridComponentType<>(ChunkBasedComponent.class);
+public class ChunkLogic implements FlywheelVisualManagersComponent, FlywheelEmbeddingComponent, FlywheelEffectComponent, ClipableComponent, GetBlockStateComponent, SetBlockStateComponent {
+    public static final GridLogicType<Grid, ChunkLogic> TYPE = GridLogicType.createLogic(ChunkLogic.class, Grid.class, g -> null);
     private final ChunkGridBackend backend;
     private final ClientGridLevel level;
     private final VisualManager<BlockEntity> blockEntityManager = new VisualManagerImpl<>(new BlockEntityStorage() {
@@ -60,7 +66,7 @@ public class ChunkBasedComponent implements FlywheelManagedComponent, FlywheelEm
 
     private final VisualManager<Effect> effectManager = new VisualManagerImpl<>(new EffectStorage());
 
-    public ChunkBasedComponent(ClientGridLevel level, ChunkGridBackend backend) {
+    public ChunkLogic(ClientGridLevel level, ChunkGridBackend backend) {
         this.backend = backend;
         this.level = level;
 

@@ -1,7 +1,7 @@
 package com.ewoudje.waffleblocks.impl.flywheel;
 
 import com.ewoudje.waffleblocks.api.ClientGrid;
-import com.ewoudje.waffleblocks.api.components.FlywheelEmbeddingComponent;
+import com.ewoudje.waffleblocks.api.components.rendering.FlywheelEmbeddingComponent;
 import dev.engine_room.flywheel.api.task.Plan;
 import dev.engine_room.flywheel.api.visual.DynamicVisual;
 import dev.engine_room.flywheel.api.visualization.VisualEmbedding;
@@ -11,7 +11,6 @@ import net.minecraft.core.Vec3i;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
-import org.joml.Vector3dc;
 
 public abstract class FlywheelEmbeddingComponentVisual implements DynamicVisual {
     private final VisualEmbedding embedding;

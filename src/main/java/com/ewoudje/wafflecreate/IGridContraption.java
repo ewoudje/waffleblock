@@ -22,4 +22,6 @@ public interface IGridContraption extends Grid, ClientGrid, ServerGrid {
     void waffle$addBlock(Level level, BlockPos pos, Pair<StructureTemplate.StructureBlockInfo, BlockEntity> pair);
 
     void waffle$removeBlock(Level level, BlockPos pos);
+
+    ContraptionLogic waffle$getLogic();
 }

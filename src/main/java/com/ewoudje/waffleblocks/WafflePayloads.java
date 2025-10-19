@@ -4,6 +4,7 @@ import com.ewoudje.waffleblocks.api.GridSource;
 import com.ewoudje.waffleblocks.impl.GridLevelManager;
 import com.ewoudje.waffleblocks.impl.payloads.NewGridPacket;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.HandlerThread;
@@ -15,8 +16,8 @@ public class WafflePayloads {
         registrar.playToClient(
                 NewGridPacket.TYPE,
                 NewGridPacket.STREAM_CODEC,
-                (p, ctx) -> {
-                    GridLevelManager.getCurrentClientLevel().createNewGrid(p.gridId(), (GridSource.Factory<Object>) p.sourceFactory(), p.context());
+                (c, ctx) -> {
+                    GridLevelManager.getCurrentClientLevel().createNewGrid(c.gridId(), (GridSource.Factory<Object>) c.sourceFactory(), c.context());
                 }
         );
     }

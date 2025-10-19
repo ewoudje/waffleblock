@@ -2,11 +2,9 @@ package com.ewoudje.waffleblocks.mixins.impl.cag.base;
 
 import com.ewoudje.waffleblocks.api.ClientGrid;
 import com.ewoudje.waffleblocks.api.Grid;
-import com.ewoudje.waffleblocks.api.GridLevel;
 import com.ewoudje.waffleblocks.api.ServerGridLevel;
-import com.ewoudje.waffleblocks.api.components.GridComponentType;
 import com.ewoudje.waffleblocks.impl.GridLevelManager;
-import com.ewoudje.wafflecreate.ContraptionComponent;
+import com.ewoudje.wafflecreate.ContraptionLogic;
 import com.ewoudje.wafflecreate.ContraptionGridSource;
 import com.ewoudje.wafflecreate.IGridContraption;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
@@ -22,7 +20,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Nullable;
 import org.joml.*;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -32,7 +29,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
-import java.util.Objects;
 
 @Mixin(Contraption.class)
 public abstract class MixinContraption implements Grid, IGridContraption, ClientGrid {
@@ -49,7 +45,7 @@ public abstract class MixinContraption implements Grid, IGridContraption, Client
     @Unique
     private int id = -1;
     @Unique
-    private final ContraptionComponent component = new ContraptionComponent((Contraption) (Object) this);
+    private final ContraptionLogic logic = new ContraptionLogic((Contraption) (Object) this);
 
     @Override
     public Vector3dc getPosition() {
@@ -99,15 +95,13 @@ public abstract class MixinContraption implements Grid, IGridContraption, Client
     }
 
     @Override
-    public StructureTemplate.StructureBlockInfo waffle$getBlockInfo(BlockPos pos) {
-        return this.blocks.get(pos);
+    public ContraptionLogic waffle$getLogic() {
+        return logic;
     }
 
     @Override
-    public <C> C getClientComponent(GridComponentType<ClientGrid, C> componentType) {
-        if (componentType.isAssignableFrom(ContraptionComponent.TYPE)) return (C) component;
-
-        return null;
+    public StructureTemplate.StructureBlockInfo waffle$getBlockInfo(BlockPos pos) {
+        return this.blocks.get(pos);
     }
 
     @Override
@@ -132,13 +126,6 @@ public abstract class MixinContraption implements Grid, IGridContraption, Client
         } else {
             return getRotation();
         }
-    }
-
-    @Override
-    public <C> @Nullable C getComponent(GridComponentType<? extends Grid, C> componentType) {
-        if (componentType.isAssignableFrom(ContraptionComponent.TYPE)) return (C) component;
-
-        return null;
     }
 
     @Inject(method = "onEntityInitialize", at = @At("TAIL"))

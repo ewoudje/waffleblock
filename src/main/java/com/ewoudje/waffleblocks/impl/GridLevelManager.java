@@ -3,13 +3,17 @@ package com.ewoudje.waffleblocks.impl;
 import com.ewoudje.waffleblocks.api.ClientGridLevel;
 import com.ewoudje.waffleblocks.api.GridLevel;
 import com.ewoudje.waffleblocks.api.ServerGridLevel;
-import com.ewoudje.waffleblocks.api.components.FlywheelEffectComponent;
+import com.ewoudje.waffleblocks.api.components.ComponentGetter;
+import com.ewoudje.waffleblocks.api.components.rendering.FlywheelEffectComponent;
 import com.ewoudje.waffleblocks.impl.simple.SimpleClientGridLevel;
 import com.ewoudje.waffleblocks.impl.simple.SimpleServerGridLevel;
 import dev.engine_room.flywheel.api.event.ReloadLevelRendererEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.level.LevelEvent;
@@ -24,10 +28,12 @@ public class GridLevelManager {
             getLevel((Level) e.getLevel());
         });
 
+
+        ComponentGetter<FlywheelEffectComponent> getter = FlywheelEffectComponent.TYPE.getter();
         bus.addListener(ReloadLevelRendererEvent.class,
-                e -> getClientLevel(e.level())
-                        .findWithClientComponent(FlywheelEffectComponent.TYPE)
-                        .forEach(p -> FlywheelEffectComponent.onAdd(p.left(), p.right()))
+                e ->
+                        getter.getAllComponentsPaired(getClientLevel(e.level()))
+                        .forEach(p -> FlywheelEffectComponent.onAdd(p.getFirst(), p.getSecond()))
         );
     }
 

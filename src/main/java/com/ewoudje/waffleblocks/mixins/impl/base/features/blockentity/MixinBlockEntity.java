@@ -1,22 +1,15 @@
 package com.ewoudje.waffleblocks.mixins.impl.base.features.blockentity;
 
-import com.ewoudje.waffleblocks.api.ClientGrid;
 import com.ewoudje.waffleblocks.api.Grid;
 import com.ewoudje.waffleblocks.api.GridLevel;
 import com.ewoudje.waffleblocks.api.compaters.Grids;
-import com.ewoudje.waffleblocks.api.components.BlockEntitiesContainerComponent;
-import com.ewoudje.waffleblocks.api.components.FlywheelManagedComponent;
-import com.ewoudje.waffleblocks.impl.chunk.ChunkGridBackend;
+import com.ewoudje.waffleblocks.api.components.ComponentGetter;
+import com.ewoudje.waffleblocks.api.components.world.BlockEntitiesContainerComponent;
 import com.ewoudje.waffleblocks.util.GridBlockEntityHelper;
 import com.ewoudje.waffleblocks.util.GridBlockPos;
-import dev.engine_room.flywheel.api.visualization.VisualManager;
-import dev.engine_room.flywheel.api.visualization.VisualizationManager;
-import dev.engine_room.flywheel.lib.visualization.VisualizationHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -26,6 +19,9 @@ import javax.annotation.Nullable;
 
 @Mixin(BlockEntity.class)
 public abstract class MixinBlockEntity implements GridBlockEntityHelper.BlockEntityGridContainer {
+    @Unique
+    private static final ComponentGetter<BlockEntitiesContainerComponent> CONTAINER_GETTER = BlockEntitiesContainerComponent.TYPE.getter();
+
     @Shadow public abstract BlockPos getBlockPos();
 
     @Mutable
@@ -43,7 +39,7 @@ public abstract class MixinBlockEntity implements GridBlockEntityHelper.BlockEnt
             grid = GridBlockPos.getGrid(gLevel, getBlockPos());
 
             if (grid != null) {
-                var comp = grid.getComponent(BlockEntitiesContainerComponent.TYPE);
+                var comp = CONTAINER_GETTER.getComponent(grid);
                 if (comp != null) {
                     comp.addBlockEntity((BlockEntity) (Object) this);
                 }
@@ -57,7 +53,7 @@ public abstract class MixinBlockEntity implements GridBlockEntityHelper.BlockEnt
     @Inject(method = "setRemoved()V", at = @At("TAIL"))
     private void wb$removeVisual(CallbackInfo ci) {
         if (grid != null) {
-            var comp = grid.getComponent(BlockEntitiesContainerComponent.TYPE);
+            var comp = CONTAINER_GETTER.getComponent(grid);
             if (comp != null) {
                 comp.removeBlockEntity((BlockEntity) (Object) this);
             }

@@ -2,14 +2,16 @@ package com.ewoudje.wafflecreate;
 
 import com.ewoudje.waffleblocks.api.Grid;
 import com.ewoudje.waffleblocks.api.components.*;
+import com.ewoudje.waffleblocks.api.components.interaction.ClipableComponent;
+import com.ewoudje.waffleblocks.api.components.world.GetBlockStateComponent;
+import com.ewoudje.waffleblocks.api.components.world.SetBlockStateComponent;
+import com.ewoudje.waffleblocks.api.components.rendering.FlywheelEmbeddingComponent;
 import com.ewoudje.waffleblocks.util.ClipContextHelper;
 import com.ewoudje.waffleblocks.util.GridBlockPos;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.simibubi.create.content.contraptions.Contraption;
-import com.simibubi.create.content.contraptions.ContraptionBlockChangedPacket;
 import dev.engine_room.flywheel.api.visualization.VisualEmbedding;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
-import net.createmod.catnip.platform.CatnipServices;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.ClipBlockStateContext;
 import net.minecraft.world.level.ClipContext;
@@ -22,11 +24,35 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ContraptionComponent implements ClipableComponent, GetBlockStateComponent, SetBlockStateComponent, FlywheelEmbeddingComponent {
-    public static final GridComponentType<IGridContraption, ContraptionComponent> TYPE = new GridComponentType<>(ContraptionComponent.class);
+import java.util.Set;
+
+public class ContraptionLogic implements ClipableComponent, GetBlockStateComponent, SetBlockStateComponent, FlywheelEmbeddingComponent {
+    public static final GridLogicType<IGridContraption, ContraptionLogic> TYPE =
+            GridLogicType.createLogic(
+                    ContraptionLogic.class,
+                    IGridContraption.class,
+                    IGridContraption::waffle$isInitialized,
+                    () -> new ComponentsProvider<>() {
+                @Override
+                public @NotNull Set<GridComponentType<? extends IGridContraption, ?>> getSupportedComponentTypes() {
+                    return (Set<GridComponentType<? extends IGridContraption, ?>>) (Set) TYPE.getSupportedComponents();
+                }
+
+                @Override
+                public int getPriority() {
+                    return 0;
+                }
+
+                @Override
+                public @Nullable <C> ComponentGetter<C> createGetter(GridComponentType<? extends IGridContraption, C> type) {
+                    if (type.isPartOf(TYPE)) {
+                        return g -> (C) ((IGridContraption) g).waffle$getLogic();
+                    } else return null;
+                }
+            });
     private final Contraption contraption;
 
-    public ContraptionComponent(Contraption contraption) {
+    public ContraptionLogic(Contraption contraption) {
         this.contraption = contraption;
     }
 

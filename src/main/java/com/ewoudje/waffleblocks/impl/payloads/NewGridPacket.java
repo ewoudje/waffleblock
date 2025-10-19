@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public record NewGridPacket<C>(int gridId, GridSource.Factory<C> sourceFactory, C context) implements CustomPacketPayload {
     public static final CustomPacketPayload.Type<NewGridPacket<?>> TYPE = new CustomPacketPayload.Type<>(WaffleBlocks.resource("new_grid"));
 
-    public static final StreamCodec<RegistryFriendlyByteBuf, NewGridPacket<?>> STREAM_CODEC = new StreamCodec<>() {
+    public static final StreamCodec<? super RegistryFriendlyByteBuf, NewGridPacket<?>> STREAM_CODEC = new StreamCodec<>() {
         @Override
         @NotNull
         public NewGridPacket<?> decode(@NotNull RegistryFriendlyByteBuf buf) {
@@ -31,7 +31,7 @@ public record NewGridPacket<C>(int gridId, GridSource.Factory<C> sourceFactory, 
     };
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public Type<NewGridPacket<?>> type() {
         return TYPE;
     }
 }

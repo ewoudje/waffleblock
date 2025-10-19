@@ -1,33 +1,22 @@
 package com.ewoudje.waffleblocks.api;
 
-import com.ewoudje.waffleblocks.api.components.GridComponentType;
-import it.unimi.dsi.fastutil.Pair;
+import com.ewoudje.waffleblocks.util.sequence.WaffleSequence;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.Nullable;
+
 import java.util.stream.Stream;
 
-public interface GridSource<G extends Grid, C> {
+public interface GridSource<G extends Grid, CTX> {
+    WaffleSequence<G> getAllGrids();
 
-    @Nullable
-    Stream<G> findGridIn(AABB aabb);
+    G createGrid(int id, CTX context);
 
+    Factory<CTX> getFactory();
 
-    default <C> Stream<Pair<Grid, C>> findWithComponent(GridComponentType<Grid, C> component) {
-        return (Stream<Pair<Grid, C>>) (Object) findWithMyComponent((GridComponentType<G, C>) component);
-    }
+    interface Factory<CTX> {
+        <L extends ClientGridLevel> GridSource<? extends ClientGrid, CTX> createClientSource(L level);
+        <L extends ServerGridLevel> GridSource<? extends ServerGrid, CTX> createServerSource(L level);
 
-    <C> Stream<Pair<G, C>> findWithMyComponent(GridComponentType<G, C> component);
-
-    G createGrid(int id, C context);
-
-    Factory<C> getFactory();
-
-    interface Factory<C> {
-        <L extends ClientGridLevel> GridSource<? extends ClientGrid, C> createClientSource(L level);
-        <L extends ServerGridLevel> GridSource<? extends ServerGrid, C> createServerSource(L level);
-
-        StreamCodec<? super RegistryFriendlyByteBuf, C> contextCodec();
+        StreamCodec<? super RegistryFriendlyByteBuf, CTX> contextCodec();
     }
 }

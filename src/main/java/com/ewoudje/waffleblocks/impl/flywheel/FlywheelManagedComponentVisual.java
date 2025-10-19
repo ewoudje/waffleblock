@@ -1,9 +1,9 @@
 package com.ewoudje.waffleblocks.impl.flywheel;
 
 import com.ewoudje.waffleblocks.api.ClientGrid;
-import com.ewoudje.waffleblocks.api.components.FlywheelEffectComponent;
-import com.ewoudje.waffleblocks.api.components.FlywheelEmbeddingComponent;
-import com.ewoudje.waffleblocks.api.components.FlywheelManagedComponent;
+import com.ewoudje.waffleblocks.api.components.rendering.FlywheelEffectComponent;
+import com.ewoudje.waffleblocks.api.components.rendering.FlywheelEmbeddingComponent;
+import com.ewoudje.waffleblocks.api.components.rendering.FlywheelVisualManagersComponent;
 import com.ewoudje.waffleblocks.util.WrappedCamera;
 import dev.engine_room.flywheel.api.task.Plan;
 import dev.engine_room.flywheel.api.visual.*;
@@ -12,7 +12,6 @@ import dev.engine_room.flywheel.impl.visual.DynamicVisualContextImpl;
 import dev.engine_room.flywheel.impl.visualization.VisualManagerImpl;
 import dev.engine_room.flywheel.lib.task.MapContextPlan;
 import dev.engine_room.flywheel.lib.task.NestedPlan;
-import net.minecraft.client.Camera;
 import org.joml.FrustumIntersection;
 import org.joml.Matrix4f;
 import org.joml.Vector3dc;
@@ -23,7 +22,7 @@ import java.util.stream.Stream;
  * Top level visual
  * Manages the embedding and managers, everything under the ship is part of this visual
  */
-public class FlywheelManagedComponentVisual<T extends FlywheelEffectComponent & FlywheelManagedComponent & FlywheelEmbeddingComponent> extends FlywheelEmbeddingComponentVisual implements EffectVisual<T>, TickableVisual, Visual {
+public class FlywheelManagedComponentVisual<T extends FlywheelEffectComponent & FlywheelVisualManagersComponent & FlywheelEmbeddingComponent> extends FlywheelEmbeddingComponentVisual implements EffectVisual<T>, TickableVisual, Visual {
     private final T effect;
     private final WrappedCamera camera;
 

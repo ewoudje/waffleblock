@@ -1,12 +1,15 @@
-package com.ewoudje.waffleblocks.api.components;
+package com.ewoudje.waffleblocks.api.components.rendering;
 
 import com.ewoudje.waffleblocks.api.ClientGrid;
+import com.ewoudje.waffleblocks.api.components.GridComponentType;
 import dev.engine_room.flywheel.api.visualization.VisualEmbedding;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
-import net.minecraft.core.Vec3i;
 
 public interface FlywheelEmbeddingComponent {
-    GridComponentType<ClientGrid, FlywheelEmbeddingComponent> TYPE = new GridComponentType<>(FlywheelEmbeddingComponent.class);
+    GridComponentType<ClientGrid, FlywheelEmbeddingComponent> TYPE = new GridComponentType<>(
+            ClientGrid.class,
+            FlywheelEmbeddingComponent.class
+    );
 
     /**
      * This should return a newly created embedding or an already existing embedding.

@@ -1,6 +1,7 @@
-package com.ewoudje.waffleblocks.api.components;
+package com.ewoudje.waffleblocks.api.components.interaction;
 
 import com.ewoudje.waffleblocks.api.Grid;
+import com.ewoudje.waffleblocks.api.components.GridComponentType;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.world.level.ClipBlockStateContext;
 import net.minecraft.world.level.ClipContext;
@@ -9,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ClipableComponent {
-    GridComponentType<Grid, ClipableComponent> TYPE = new GridComponentType<>(ClipableComponent.class);
+    GridComponentType<Grid, ClipableComponent> TYPE = new GridComponentType<>(Grid.class, ClipableComponent.class);
 
     /**
      * @param context the clip context

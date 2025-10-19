@@ -5,9 +5,11 @@ import com.ewoudje.waffleblocks.api.Grid;
 import com.ewoudje.waffleblocks.api.GridLevel;
 import com.ewoudje.waffleblocks.api.GridSource;
 import com.ewoudje.waffleblocks.api.components.GridComponentType;
+import com.ewoudje.waffleblocks.util.sequence.WaffleSequence;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.Int2ObjectRBTreeMap;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -27,13 +29,9 @@ public abstract class AbstractGridLevel<G extends Grid> implements GridLevel {
     }
 
     @Override
-    public @Nullable Stream<G> findGridIn(AABB aabb) {
-        return sources.stream().flatMap(s -> s.findGridIn(aabb));
-    }
-
-    @Override
-    public <C> Stream<Pair<? extends Grid, C>> findWithComponent(GridComponentType<Grid, C> component) {
-        return sources.stream().flatMap(s -> s.findWithComponent(component));
+    public @NotNull WaffleSequence<? extends G> getAllGrids() {
+        //TODO: shouldn't use WaffleSequence.of as this will not get optimized
+        return WaffleSequence.of(sources.stream().flatMap(i -> i.getAllGrids().stream()));
     }
 
     @Override

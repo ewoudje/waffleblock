@@ -13,8 +13,8 @@ public class GridChecks {
     public static boolean isWithinDistance(GridLevel level, Vector3dc a, Vector3dc b, double distance) {
         var d2 = distance * distance;
 
-        return GridTransformers.getAllTransformsOf(level, a).anyMatch(p ->
-                        GridTransformers.getAllTransformsOf(level, b).anyMatch(
+        return GridTransformers.getAllTransformsOf(level, a).stream().anyMatch(p ->
+                        GridTransformers.getAllTransformsOf(level, b).stream().anyMatch(
                                 q -> p.distanceSquared(q) < d2));
     }
 
@@ -23,8 +23,8 @@ public class GridChecks {
     }
 
     public static boolean isWithinManhattanDistance(GridLevel level, Vector3dc a, Vector3dc b, double distanceX, double distanceY, double distanceZ) {
-        return GridTransformers.getAllTransformsOf(level, a).anyMatch(p ->
-                GridTransformers.getAllTransformsOf(level, b).anyMatch(
+        return GridTransformers.getAllTransformsOf(level, a).stream().anyMatch(p ->
+                GridTransformers.getAllTransformsOf(level, b).stream().anyMatch(
                         q -> (Math.abs(q.x() - p.x()) < distanceX)
                                 || (Math.abs(q.y() - p.y()) < distanceY)
                                 || (Math.abs(q.z() - p.z()) < distanceZ)));

@@ -26,19 +26,14 @@ public abstract class AbstractClientGridLevel extends AbstractGridLevel<ClientGr
     }
 
     @Override
-    public <C> Stream<Pair<ClientGrid, C>> findWithClientComponent(GridComponentType<ClientGrid, C> component) {
-        return (Stream<Pair<ClientGrid, C>>) (Object) this.findWithComponent((GridComponentType<Grid, C>) (Object) component); //Most safe cast in history
-    }
-
-    @Override
     protected GridSource<? extends ClientGrid, ?> createGridSource(GridSource.Factory<?> factory) {
         return factory.createClientSource(this);
     }
 
     @Override
-    public <C> ClientGrid createNewGrid(int gridId, GridSource.Factory<C> factory, C ctx) {
+    public <C> @NotNull ClientGrid createNewGrid(int gridId, GridSource.Factory<C> factory, C ctx) {
         GridSource<? extends ClientGrid, C> source = (GridSource<? extends ClientGrid, C>) sources.get(WaffleRegistries.GRID_SOURCE.getId(factory));
-        ClientGrid grid =  source.createGrid(gridId, ctx);
+        ClientGrid grid = source.createGrid(gridId, ctx);
         gridMap.put(gridId, grid);
 
         return grid;

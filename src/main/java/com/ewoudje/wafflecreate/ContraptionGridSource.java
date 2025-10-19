@@ -1,15 +1,16 @@
 package com.ewoudje.wafflecreate;
 
 import com.ewoudje.waffleblocks.api.*;
-import com.ewoudje.waffleblocks.api.components.GridComponentType;
+import com.ewoudje.waffleblocks.api.components.ComponentsProvider;
+import com.ewoudje.waffleblocks.util.sequence.WaffleSequence;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
-import it.unimi.dsi.fastutil.Pair;
+import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.phys.AABB;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class ContraptionGridSource implements GridSource<IGridContraption, Integer> {
@@ -27,7 +28,7 @@ public class ContraptionGridSource implements GridSource<IGridContraption, Integ
 
         @Override
         public StreamCodec<? super RegistryFriendlyByteBuf, Integer> contextCodec() {
-            return ByteBufCodecs.INT;
+            return ByteBufCodecs.VAR_INT;
         }
     };
 
@@ -37,22 +38,15 @@ public class ContraptionGridSource implements GridSource<IGridContraption, Integ
         this.level = level;
     }
 
-
     @Override
-    public @Nullable Stream<IGridContraption> findGridIn(AABB aabb) {
-        return level.getLevel().getEntitiesOfClass(AbstractContraptionEntity.class, aabb)
-                .stream()
-                .map(e -> (IGridContraption) e.getContraption());
-    }
-
-    @Override
-    public <C> Stream<Pair<IGridContraption, C>> findWithMyComponent(GridComponentType<IGridContraption, C> component) {
-        return Stream.empty();
+    public WaffleSequence<IGridContraption> getAllGrids() {
+        return WaffleSequence.empty();
     }
 
     @Override
     public IGridContraption createGrid(int id, Integer entityId) {
-        IGridContraption contraption = (IGridContraption) ((AbstractContraptionEntity) level.getLevel().getEntity(entityId)).getContraption();
+        var entity = (AbstractContraptionEntity) level.getLevel().getEntity(entityId);
+        IGridContraption contraption = (IGridContraption) entity.getContraption();
         contraption.waffle$init(id);
         return contraption;
     }
