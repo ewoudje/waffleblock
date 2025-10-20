@@ -7,7 +7,9 @@ public enum GridSide {
 
     public static GridSide of(Class<? extends Grid> gridClass) {
         if (ClientGrid.class.isAssignableFrom(gridClass)) {
-            return CLIENT;
+            if (ServerGrid.class.isAssignableFrom(gridClass)) {
+                return COMMON;
+            } else return CLIENT;
         } else if (ServerGrid.class.isAssignableFrom(gridClass)) {
             return SERVER;
         } else {

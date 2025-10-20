@@ -38,67 +38,38 @@ import org.slf4j.Logger;
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(WaffleBlocks.MODID)
 public class WaffleBlocks {
-    // Define mod id in a common place for everything to reference
     public static final String MODID = "waffleblocks";
-    // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
 
 
-    // The constructor for the mod class is the first code that is run when your mod is loaded.
-    // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public WaffleBlocks(IEventBus modEventBus, ModContainer modContainer) {
-        // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
 
         WaffleAttachments.register(modEventBus);
         WaffleRegistries.register(modEventBus);
         WafflePayloads.register(modEventBus);
+        WaffleGridComponents.register(modEventBus);
         WaffleGridLogics.register(modEventBus);
+        GridLevelManager.register(modEventBus);
         modEventBus.addListener((RegisterEvent event) -> event.register(WaffleRegistries.GRID_SOURCE_KEY, resource("contraptions"), () -> ContraptionGridSource.FACTORY));
 
-        // Register ourselves for server and other game events we are interested in.
-        // Note that this is necessary if and only if we want *this* class (Waffleblocks) to respond directly to events.
-        // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
-        NeoForge.EVENT_BUS.register(this);
-        GridLevelManager.register(NeoForge.EVENT_BUS);
 
-        // Register our mod's ModConfigSpec so that FML can create and load the config file for us
+        NeoForge.EVENT_BUS.addListener(this::tick);
+
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        // Some common setup code
-        LOGGER.info("HELLO FROM COMMON SETUP");
-
-        if (Config.logDirtBlock) LOGGER.info("DIRT BLOCK >> {}", BuiltInRegistries.BLOCK.getKey(Blocks.DIRT));
-
-        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+        LOGGER.info("{}{}", Config.magicNumberIntroduction, Config.magicNumber);
     }
 
-    private void tick(ServerTickEvent event) {
+    /**
+     * For debugging
+     */
+    private void tick(ServerTickEvent.Post event) {
         GridContext.tickCheck();
         EntityEmulation.tickCheck();
-    }
-
-    // You can use SubscribeEvent and let the Event Bus discover methods to call
-    @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event) {
-        // Do something when the server starts
-        LOGGER.info("HELLO from server starting");
-    }
-
-    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
-    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-    public static class ClientModEvents {
-        @SubscribeEvent
-        public static void onClientSetup(FMLClientSetupEvent event) {
-            // Some client setup code
-            LOGGER.info("HELLO FROM CLIENT SETUP");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-        }
     }
 
     public static ResourceLocation resource(String path) {

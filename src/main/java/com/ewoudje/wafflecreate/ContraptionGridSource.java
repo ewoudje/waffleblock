@@ -39,11 +39,6 @@ public class ContraptionGridSource implements GridSource<IGridContraption, Integ
     }
 
     @Override
-    public WaffleSequence<IGridContraption> getAllGrids() {
-        return WaffleSequence.empty();
-    }
-
-    @Override
     public IGridContraption createGrid(int id, Integer entityId) {
         var entity = (AbstractContraptionEntity) level.getLevel().getEntity(entityId);
         IGridContraption contraption = (IGridContraption) entity.getContraption();

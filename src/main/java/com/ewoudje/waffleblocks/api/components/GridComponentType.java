@@ -1,11 +1,14 @@
 package com.ewoudje.waffleblocks.api.components;
 
 import com.ewoudje.waffleblocks.WaffleBlocks;
+import com.ewoudje.waffleblocks.WaffleRegistries;
 import com.ewoudje.waffleblocks.api.Grid;
 import com.ewoudje.waffleblocks.api.GridSide;
 import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -13,6 +16,8 @@ import java.util.function.Predicate;
 
 public class GridComponentType<G extends Grid, COMP> {
     private static final Map<Class<?>, GridComponentType<?, ?>> TYPES = new HashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridComponentType.class);
+    private static boolean configured = false;
     private final BiConsumer<G, COMP> onAdd, onRemove;
     private Predicate<G> predicate;
     private ComponentGetter<COMP> getter;
@@ -26,14 +31,16 @@ public class GridComponentType<G extends Grid, COMP> {
     }
 
     public GridComponentType(Class<G> gClass, Class<COMP> clazz, BiConsumer<G, COMP> onAdd, BiConsumer<G, COMP> onRemove) {
+        if (configured) throw new IllegalStateException("ComponentTypes have already been configured, but you are creating now later? You should be registering these!");
+
         this.onAdd = onAdd;
         this.onRemove = onRemove;
         this.clazz = clazz;
         this.gClass = gClass;
         this.side = GridSide.of(gClass);
         TYPES.put(clazz, this);
-
-        configure();
+        getter = new DelegateGetter<>(this);
+        predicate = g -> false;
     }
 
     @NotNull
@@ -73,22 +80,42 @@ public class GridComponentType<G extends Grid, COMP> {
         return side;
     }
 
-    public void configure() {
+    @Nullable
+    public static <C> GridComponentType<?, C> get(Class<C> clazz) {
+        return (GridComponentType<?, C>) TYPES.get(clazz);
+    }
+
+    public static boolean isConfigured() {
+        return configured;
+    }
+
+    private void configure() {
+        assert !configured;
+
+
         getter = ((ComponentsProvider<G>) ComponentsProvider.getGlobalComponentsProvider(side)).createGetter(this);
         if (getter == null) {
-            WaffleBlocks.LOGGER.warn("Component {} has no implementations!, this means its not used at all?", clazz.getSimpleName());
+            LOGGER.warn("GridComponent {} has no implementations!, this means its not used at all?", clazz.getSimpleName());
             getter = g -> null;
         }
 
         predicate = g -> getter.getComponent(g) != null;
     }
 
-    @Nullable
-    public static <C> GridComponentType<?, C> get(Class<C> clazz) {
-        return (GridComponentType<?, C>) TYPES.get(clazz);
-    }
+    public static void configureAll() {
+        if (configured) return;
 
-    public static Collection<GridComponentType<?, ?>> all() {
-        return TYPES.values();
+        WaffleRegistries.COMPONENTS.forEach(t -> {
+            try {
+                if (!TYPES.containsKey(t.clazz)) throw new IllegalStateException("Unregistered component?");
+
+                t.configure();
+            } catch (Exception e) {
+                LOGGER.error("Error while trying to configure GridComponentType {}", t.clazz.getSimpleName(), e);
+            }
+        });
+
+
+        configured = true;
     }
 }

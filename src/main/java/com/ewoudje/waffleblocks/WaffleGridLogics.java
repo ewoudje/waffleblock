@@ -9,22 +9,26 @@ import com.ewoudje.waffleblocks.impl.simple.LogicBasedComponentProvider;
 import com.ewoudje.wafflecreate.ContraptionLogic;
 import com.ewoudje.wafflecreate.IGridContraption;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 public class WaffleGridLogics {
-    public static void configureLogics(GridLogicType<?, ?> type) {
+    public static void configureLogic(GridLogicType<?, ?> type) {
         var provider =
                 type.selfProviding() != null ?
                         type.selfProviding().get() :
                         new LogicBasedComponentProvider<>(type);
 
         switch (type.getSide()) {
-            case SERVER -> WaffleComponentProviders.SERVER_COMPONENTS_PROVIDER.add((ComponentsProvider<ServerGrid>) provider);
-            case CLIENT -> WaffleComponentProviders.CLIENT_COMPONENTS_PROVIDER.add((ComponentsProvider<ClientGrid>) provider);
-            case COMMON -> WaffleComponentProviders.SHARED_COMPONENTS_PROVIDER.add((ComponentsProvider<Grid>) provider);
+            case SERVER ->
+                    WaffleComponentProviders.SERVER_COMPONENTS_PROVIDER.add((ComponentsProvider<ServerGrid>) provider);
+            case CLIENT ->
+                    WaffleComponentProviders.CLIENT_COMPONENTS_PROVIDER.add((ComponentsProvider<ClientGrid>) provider);
+            case COMMON -> {
+                WaffleComponentProviders.SERVER_COMPONENTS_PROVIDER.add((ComponentsProvider<ServerGrid>) provider);
+                WaffleComponentProviders.CLIENT_COMPONENTS_PROVIDER.add((ComponentsProvider<ClientGrid>) provider);
+                WaffleComponentProviders.SHARED_COMPONENTS_PROVIDER.add((ComponentsProvider<Grid>) provider);
+            }
         }
     }
 

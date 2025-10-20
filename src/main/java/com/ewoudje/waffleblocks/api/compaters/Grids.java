@@ -31,7 +31,8 @@ public class Grids {
             GridLevel level,
             AABB aabb
     ) {
-        return level.getAllGrids().filter(g -> g.getAABB().intersects(aabb));
+        //TODO have it only return within the AABB
+        return level.getAllGrids();
     }
 
     public static GridLevel getLevel(Level level) {

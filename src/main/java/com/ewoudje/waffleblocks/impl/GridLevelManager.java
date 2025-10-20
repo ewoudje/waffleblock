@@ -1,5 +1,6 @@
 package com.ewoudje.waffleblocks.impl;
 
+import com.ewoudje.waffleblocks.WaffleBlocks;
 import com.ewoudje.waffleblocks.api.ClientGridLevel;
 import com.ewoudje.waffleblocks.api.GridLevel;
 import com.ewoudje.waffleblocks.api.ServerGridLevel;
@@ -16,6 +17,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.level.LevelEvent;
 
 import java.util.HashMap;
@@ -24,17 +26,21 @@ public class GridLevelManager {
     private static final HashMap<Level, GridLevel> levels = new HashMap<>();
 
     public static void register(IEventBus bus) {
-        bus.addListener(LevelEvent.Load.class, e -> {
+        NeoForge.EVENT_BUS.addListener(LevelEvent.Load.class, e -> {
             getLevel((Level) e.getLevel());
         });
 
 
         ComponentGetter<FlywheelEffectComponent> getter = FlywheelEffectComponent.TYPE.getter();
-        bus.addListener(ReloadLevelRendererEvent.class,
-                e ->
+        NeoForge.EVENT_BUS.addListener(ReloadLevelRendererEvent.class,
+                e -> {
+                    try {
                         getter.getAllComponentsPaired(getClientLevel(e.level()))
-                        .forEach(p -> FlywheelEffectComponent.onAdd(p.getFirst(), p.getSecond()))
-        );
+                                .forEach(p -> FlywheelEffectComponent.onAdd(p.getFirst(), p.getSecond()));
+                    } catch (Exception ex) {
+                        WaffleBlocks.LOGGER.error("Failed to register flywheel effects on level reload", ex);
+                    }
+                });
     }
 
     public static GridLevel getLevel(Level level) {

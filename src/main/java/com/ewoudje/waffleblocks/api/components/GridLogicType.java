@@ -6,8 +6,11 @@ import com.ewoudje.waffleblocks.api.ServerGrid;
 import com.mojang.serialization.Codec;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
@@ -16,6 +19,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class GridLogicType<G extends Grid, L> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GridLogicType.class);
     private final Class<L> clazz;
     private final Class<G> gClass;
     private final Set<GridComponentType<? extends G, ? super L>> supportedComponents;

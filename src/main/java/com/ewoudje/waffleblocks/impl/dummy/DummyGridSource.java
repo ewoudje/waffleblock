@@ -47,11 +47,6 @@ public class DummyGridSource implements GridSource<DummyGrid, Void> {
     }
 
     @Override
-    public WaffleSequence<DummyGrid> getAllGrids() {
-        return WaffleSequence.empty();
-    }
-
-    @Override
     public DummyGrid createGrid(int id, Void context) {
         var pos = new Vector3d(64.0, 32.0, 64.0);
         var rot = new Quaternionf();

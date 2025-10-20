@@ -30,8 +30,7 @@ public abstract class AbstractGridLevel<G extends Grid> implements GridLevel {
 
     @Override
     public @NotNull WaffleSequence<? extends G> getAllGrids() {
-        //TODO: shouldn't use WaffleSequence.of as this will not get optimized
-        return WaffleSequence.of(sources.stream().flatMap(i -> i.getAllGrids().stream()));
+        return WaffleSequence.of(gridMap.values().stream());
     }
 
     @Override
