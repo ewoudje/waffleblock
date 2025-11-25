@@ -13,13 +13,17 @@ import com.simibubi.create.content.contraptions.Contraption;
 import dev.engine_room.flywheel.api.visualization.VisualEmbedding;
 import dev.engine_room.flywheel.api.visualization.VisualizationContext;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
+import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.world.level.ClipBlockStateContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkSource;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,18 +91,23 @@ public class ContraptionLogic implements ClipableComponent, GetBlockStateCompone
     public boolean setBlockState(GridBlockPos pos, BlockState state, int flags, int recursionLeft, Operation<Boolean> original) {
         Level level = contraption.entity.level();
         BlockPos lpos = pos.asLocal();
-        BlockPos inWorldPos = lpos.offset(contraption.anchor);
+        BlockPos inWorldPos = lpos.offset(contraption.anchor); // To interact with create, its the block where it would be if dissembled
         StructureTemplate.StructureBlockInfo old = ((IGridContraption) contraption).waffle$getBlockInfo(lpos);
 
         if (!state.isAir()) {
             if (old != null) {
-                ((IGridContraption) contraption).waffle$removeBlock(level, lpos);
+                ((IGridContraption) contraption).waffle$removeBlock(level, inWorldPos);
             }
 
-            Pair<StructureTemplate.StructureBlockInfo, BlockEntity> pair = Pair.of(new StructureTemplate.StructureBlockInfo(inWorldPos, state, null), null);
-            ((IGridContraption) contraption).waffle$addBlock(level, lpos, pair);
+            Pair<StructureTemplate.StructureBlockInfo, BlockEntity> pair = Pair.of(new StructureTemplate.StructureBlockInfo(lpos, state, null), null);
+            ((IGridContraption) contraption).waffle$addBlock(level, inWorldPos, pair);
         } else {
-            ((IGridContraption) contraption).waffle$removeBlock(level, lpos);
+            ((IGridContraption) contraption).waffle$removeBlock(level, inWorldPos);
+        }
+
+        ChunkSource source = level.getChunkSource();
+        if (source instanceof ServerChunkCache chunkCache) {
+            chunkCache.broadcast(contraption.entity, new ClientboundBlockUpdatePacket(pos, state));
         }
 
         return true;

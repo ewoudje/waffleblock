@@ -19,4 +19,6 @@ public interface Grid {
     Quaternionfc getRotation();
 
     int getId();
+
+    boolean isRemoved();
 }

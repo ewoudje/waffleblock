@@ -26,13 +26,14 @@ public class MixinLevelRenderer {
         GridLevel level;
 
         if ((level = Grids.getClientLevel(Minecraft.getInstance().level)) != null &&(grid = (ClientGrid) GridBlockPos.getGrid(level, pos)) != null) {
-            float partialTick = RenderSystem.getShaderGameTime() % 1f;
+            float partialTick = (RenderSystem.getShaderGameTime() * 24000.0F) % 1f;
 
             poseStack.pushPose();
             Vector3dc gpos = grid.getPosition(partialTick);
             poseStack.translate(gpos.x() - camX, gpos.y() - camY, gpos.z() - camZ);
             poseStack.mulPose(new Quaternionf(grid.getRotation(partialTick)));
             poseStack.translate(-0.5f, -0.5f, -0.5f);
+
 
             original.call(poseStack, consumer, entity, 0.0, 0.0, 0.0, GridBlockPos.toLocal(pos), state);
 

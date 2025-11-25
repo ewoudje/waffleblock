@@ -4,6 +4,7 @@ import com.ewoudje.waffleblocks.api.ClientGrid;
 import com.ewoudje.waffleblocks.api.Grid;
 import com.ewoudje.waffleblocks.api.ServerGridLevel;
 import com.ewoudje.waffleblocks.impl.GridLevelManager;
+import com.ewoudje.waffleblocks.mixins.impl.cag.accessors.ClockworkContraptionAccessor;
 import com.ewoudje.wafflecreate.ContraptionLogic;
 import com.ewoudje.wafflecreate.ContraptionGridSource;
 import com.ewoudje.wafflecreate.IGridContraption;
@@ -11,6 +12,9 @@ import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
 import com.simibubi.create.content.contraptions.OrientedContraptionEntity;
+import com.simibubi.create.content.contraptions.bearing.BearingContraption;
+import com.simibubi.create.content.contraptions.bearing.ClockworkContraption;
+import com.simibubi.create.content.contraptions.mounted.MountedContraption;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -41,6 +45,12 @@ public abstract class MixinContraption implements Grid, IGridContraption, Client
     @Shadow public boolean deferInvalidate;
 
     @Shadow public abstract void invalidateColliders();
+
+    @Shadow
+    public BlockPos anchor;
+
+    @Shadow
+    public abstract void expandBoundsAroundAxis(Direction.Axis axis);
 
     @Unique
     private int id = -1;
@@ -82,16 +92,31 @@ public abstract class MixinContraption implements Grid, IGridContraption, Client
 
     @Override
     public void waffle$addBlock(Level level, BlockPos pos, Pair<StructureTemplate.StructureBlockInfo, BlockEntity> pair) {
-        this.addBlock(level, pair.getKey().pos(), pair);
-        this.deferInvalidate = true;
-        this.invalidateColliders();
+        this.addBlock(level, pos, pair);
+        waffle$update();
     }
 
     @Override
     public void waffle$removeBlock(Level level, BlockPos pos) {
-        StructureTemplate.StructureBlockInfo old = this.blocks.remove(pos);
+        StructureTemplate.StructureBlockInfo old = this.blocks.remove(pos.subtract(anchor));
+        waffle$update();
+    }
+
+    @Unique
+    private void waffle$update() {
         this.deferInvalidate = true;
         this.invalidateColliders();
+
+        // Make hitboxes make sense
+        switch ((Object) this) {
+            case BearingContraption b -> expandBoundsAroundAxis(b.getFacing().getAxis());
+            case ClockworkContraptionAccessor c -> expandBoundsAroundAxis(c.getFacing().getAxis());
+            case MountedContraption m -> expandBoundsAroundAxis(Direction.Axis.Y);
+            default -> {}
+        }
+
+        // Update the entities hitbox
+        this.entity.setPos(this.entity.getPosition(1.0f));
     }
 
     @Override
@@ -134,5 +159,10 @@ public abstract class MixinContraption implements Grid, IGridContraption, Client
 
         ServerGridLevel level = (ServerGridLevel) GridLevelManager.getLevel(lvl);
         level.createGrid(ContraptionGridSource.FACTORY, entity.getId());
+    }
+
+    @Override
+    public boolean isRemoved() {
+        return entity.isRemoved();
     }
 }

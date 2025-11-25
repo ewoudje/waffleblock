@@ -10,6 +10,7 @@ public abstract class DummyGrid implements Grid {
     private final Vector3d pos;
     private final Quaternionf rot;
     private final AABB aabb = new AABB(-16, -128, -16, 32, 128, 32);
+    private boolean removed = false;
 
 
     public DummyGrid(int id, Vector3dc pos, Quaternionfc rot) {
@@ -36,5 +37,14 @@ public abstract class DummyGrid implements Grid {
     @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public boolean isRemoved() {
+        return removed;
+    }
+
+    public void remove() {
+        removed = true;
     }
 }
