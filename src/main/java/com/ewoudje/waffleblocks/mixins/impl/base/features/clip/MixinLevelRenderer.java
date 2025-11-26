@@ -4,6 +4,7 @@ import com.ewoudje.waffleblocks.api.ClientGrid;
 import com.ewoudje.waffleblocks.api.GridLevel;
 import com.ewoudje.waffleblocks.api.compaters.Grids;
 import com.ewoudje.waffleblocks.util.GridBlockPos;
+import com.ewoudje.waffleblocks.util.RenderUtils;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -26,7 +27,7 @@ public class MixinLevelRenderer {
         GridLevel level;
 
         if ((level = Grids.getClientLevel(Minecraft.getInstance().level)) != null &&(grid = (ClientGrid) GridBlockPos.getGrid(level, pos)) != null) {
-            float partialTick = (RenderSystem.getShaderGameTime() * 24000.0F) % 1f;
+            float partialTick = RenderUtils.getPartialTick();
 
             poseStack.pushPose();
             Vector3dc gpos = grid.getPosition(partialTick);

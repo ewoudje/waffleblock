@@ -1,6 +1,7 @@
 package com.ewoudje.wafflecreate;
 
 import com.ewoudje.waffleblocks.api.Grid;
+import com.ewoudje.waffleblocks.api.compaters.GridTransformers;
 import com.ewoudje.waffleblocks.api.components.*;
 import com.ewoudje.waffleblocks.api.components.interaction.ClipableComponent;
 import com.ewoudje.waffleblocks.api.components.world.GetBlockStateComponent;
@@ -8,6 +9,7 @@ import com.ewoudje.waffleblocks.api.components.world.SetBlockStateComponent;
 import com.ewoudje.waffleblocks.api.components.rendering.FlywheelEmbeddingComponent;
 import com.ewoudje.waffleblocks.util.ClipContextHelper;
 import com.ewoudje.waffleblocks.util.GridBlockPos;
+import com.ewoudje.waffleblocks.util.RenderUtils;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.simibubi.create.content.contraptions.Contraption;
 import dev.engine_room.flywheel.api.visualization.VisualEmbedding;
@@ -62,13 +64,13 @@ public class ContraptionLogic implements ClipableComponent, GetBlockStateCompone
 
     @Override
     public @Nullable BlockHitResult clip(@NotNull ClipContext context, @NotNull Operation<BlockHitResult> original) {
-        var pt = 1f;
+
+        var pt = contraption.entity.level().isClientSide ? RenderUtils.getPartialTick() : 1f;
         var from = contraption.entity.toLocalVector(context.getFrom(), pt);
         var to = contraption.entity.toLocalVector(context.getTo(), pt);
 
 
         var result = contraption.getContraptionWorld().clip(ClipContextHelper.clone(context, from, to));
-
         return new BlockHitResult(
                 contraption.entity.toGlobalVector(result.getLocation(), pt),
                 result.getDirection(),
