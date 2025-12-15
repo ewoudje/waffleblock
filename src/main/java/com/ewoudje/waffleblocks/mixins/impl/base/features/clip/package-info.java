@@ -1,20 +1,20 @@
-@WaffleFeatureSpec(name = "clip")
-@WaffleFeatureMixin(
+@FlourFeatureSpec(name = "clip")
+@FlourFeatureMixin(
         value = MixinBlockGetter.class,
         docs = "Handles grids with the clip components"
 )
-@WaffleFeatureMixin(
+@FlourFeatureMixin(
         value = MixinLevelRenderer.class,
         client = true,
         docs = "Render gridblockpos hitoutline"
 )
-@WaffleFeatureClassTransformer(
+@FlourFeatureClassTransformer(
         transformer = TransformerBlockHitResult.class,
         target = "net.minecraft.world.phys.BlockHitResult",
         docs = "Make location local to the given blockpos"
 )
 package com.ewoudje.waffleblocks.mixins.impl.base.features.clip;
 
-import com.ewoudje.waffleblocks.mixins.WaffleFeatureClassTransformer;
-import com.ewoudje.waffleblocks.mixins.WaffleFeatureMixin;
-import com.ewoudje.waffleblocks.mixins.WaffleFeatureSpec;
+import com.ewoudje.mixinflour.FlourFeatureClassTransformer;
+import com.ewoudje.mixinflour.FlourFeatureMixin;
+import com.ewoudje.mixinflour.FlourFeatureSpec;

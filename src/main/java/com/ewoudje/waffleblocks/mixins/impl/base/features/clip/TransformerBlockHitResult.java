@@ -1,6 +1,6 @@
 package com.ewoudje.waffleblocks.mixins.impl.base.features.clip;
 
-import com.ewoudje.waffleblocks.mixins.WaffleClassTransformer;
+import com.ewoudje.mixinflour.FlourClassTransformer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -10,10 +10,10 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-public class TransformerBlockHitResult implements WaffleClassTransformer {
+public class TransformerBlockHitResult implements FlourClassTransformer {
 
     @Override
-    public ClassNode transform(ClassNode node) {
+    public void transform(ClassNode node) {
         MethodNode constructor = node.methods.stream()
                 .filter(m -> m.name.equals("<init>") && m.desc.startsWith("(Z"))
                 .findAny().orElseThrow();
@@ -45,7 +45,5 @@ public class TransformerBlockHitResult implements WaffleClassTransformer {
         instrList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/world/phys/Vec3", "add", "(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;"));
         instrList.add(new InsnNode(Opcodes.ARETURN));
         node.methods.add(getLocation);
-
-        return node;
     }
 }

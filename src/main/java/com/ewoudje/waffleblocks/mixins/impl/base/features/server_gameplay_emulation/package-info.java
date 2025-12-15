@@ -3,9 +3,9 @@
  *
  * Currently disabled because emulation might not be the way to go. We can't combine the Vec3 solution with emulation.
  * */
-@WaffleFeatureDisable
-@WaffleFeatureSpec(name = "server_gameplay_emulation", isCommonOnly = true)
+@FlourFeatureDisable
+@FlourFeatureSpec(name = "server_gameplay_emulation", isCommonOnly = true)
 package com.ewoudje.waffleblocks.mixins.impl.base.features.server_gameplay_emulation;
 
-import com.ewoudje.waffleblocks.mixins.WaffleFeatureDisable;
-import com.ewoudje.waffleblocks.mixins.WaffleFeatureSpec;
+import com.ewoudje.mixinflour.FlourFeatureDisable;
+import com.ewoudje.mixinflour.FlourFeatureSpec;

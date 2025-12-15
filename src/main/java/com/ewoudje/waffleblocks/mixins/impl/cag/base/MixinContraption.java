@@ -13,7 +13,6 @@ import com.simibubi.create.content.contraptions.Contraption;
 import com.simibubi.create.content.contraptions.ControlledContraptionEntity;
 import com.simibubi.create.content.contraptions.OrientedContraptionEntity;
 import com.simibubi.create.content.contraptions.bearing.BearingContraption;
-import com.simibubi.create.content.contraptions.bearing.ClockworkContraption;
 import com.simibubi.create.content.contraptions.mounted.MountedContraption;
 import net.createmod.catnip.math.AngleHelper;
 import net.minecraft.core.BlockPos;

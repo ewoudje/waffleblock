@@ -2,7 +2,7 @@
  * Adds mixins for chunk-backed grids
  */
 
-@WaffleFeatureSpec(name = "accessors", isCommonOnly = true)
+@FlourFeatureSpec(name = "accessors", isCommonOnly = true)
 package com.ewoudje.waffleblocks.mixins.impl.base.accessors;
 
-import com.ewoudje.waffleblocks.mixins.WaffleFeatureSpec;
+import com.ewoudje.mixinflour.FlourFeatureSpec;

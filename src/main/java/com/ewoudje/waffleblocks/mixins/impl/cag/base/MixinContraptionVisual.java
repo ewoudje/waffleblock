@@ -1,6 +1,5 @@
 package com.ewoudje.waffleblocks.mixins.impl.cag.base;
 
-import com.ewoudje.wafflecreate.ContraptionLogic;
 import com.ewoudje.wafflecreate.IGridContraption;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
 import com.simibubi.create.content.contraptions.render.ContraptionVisual;

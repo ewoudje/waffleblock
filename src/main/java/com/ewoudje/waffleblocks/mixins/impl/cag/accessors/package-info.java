@@ -1,4 +1,4 @@
-@WaffleFeatureSpec(name = "accessors", isCommonOnly = true)
+@FlourFeatureSpec(name = "accessors")
 package com.ewoudje.waffleblocks.mixins.impl.cag.accessors;
 
-import com.ewoudje.waffleblocks.mixins.WaffleFeatureSpec;
+import com.ewoudje.mixinflour.FlourFeatureSpec;
