@@ -45,5 +45,26 @@ public class TransformerBlockHitResult implements FlourClassTransformer {
         instrList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/world/phys/Vec3", "add", "(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;"));
         instrList.add(new InsnNode(Opcodes.ARETURN));
         node.methods.add(getLocation);
+
+        MethodNode withPosition = node.methods.stream()
+                .filter(m -> m.name.equals("withPosition"))
+                .findAny().orElseThrow();
+
+
+        AbstractInsnNode posLoad = new VarInsnNode(Opcodes.ALOAD, 1);
+        AbstractInsnNode center2 = new MethodInsnNode(Opcodes.INVOKESTATIC, "net/minecraft/world/phys/Vec3", "atCenterOf", "(Lnet/minecraft/core/Vec3i;)Lnet/minecraft/world/phys/Vec3;");
+        AbstractInsnNode add = new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/world/phys/Vec3", "add", "(Lnet/minecraft/world/phys/Vec3;)Lnet/minecraft/world/phys/Vec3;");
+
+        int hit = 0;
+        for (var instr : withPosition.instructions) {
+            if (instr.getOpcode() == Opcodes.GETFIELD) {
+                if (++hit == 2) {
+                    constructor.instructions.insertBefore(instr.getNext(), add);
+                    constructor.instructions.insertBefore(add, center2);
+                    constructor.instructions.insertBefore(center2, posLoad);
+                    break;
+                }
+            }
+        }
     }
 }
